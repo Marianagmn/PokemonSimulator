@@ -80,6 +80,66 @@ public record Stats(
         return new Stats(1, 0, 0, 0, 0, 0);
     }
 
+    // ── EV-specific factory ─────────────────────────────────
+
+    /** Maximum EVs a single stat can have. */
+    private static final int EV_STAT_MAX = 252;
+
+    /** Maximum total EVs across all six stats. */
+    private static final int EV_TOTAL_MAX = 510;
+
+    /**
+     * Creates a Stats block specifically for Effort Values (EVs).
+     *
+     * <p>Validates both per-stat and total EV constraints:
+     * <ul>
+     *   <li>Each individual EV must be in [0, 252]</li>
+     *   <li>The sum of all EVs must not exceed 510</li>
+     * </ul>
+     *
+     * <p><b>Note:</b> The {@code hp} parameter maps to the {@code maxHp}
+     * field internally. When used as EVs, a value of 0 is semantically
+     * valid, but the general {@code Stats} constructor requires HP ≥ 1.
+     * This factory handles the mapping transparently — if HP EV is 0,
+     * it stores 1 internally to satisfy the invariant.
+     *
+     * @param hp   HP effort value [0, 252]
+     * @param atk  Attack effort value [0, 252]
+     * @param def  Defense effort value [0, 252]
+     * @param spAtk Special Attack effort value [0, 252]
+     * @param spDef Special Defense effort value [0, 252]
+     * @param spd  Speed effort value [0, 252]
+     * @return a valid EV stat block
+     * @throws IllegalArgumentException if any individual EV exceeds 252
+     *         or the total exceeds 510
+     */
+    public static Stats ofEvs(int hp, int atk, int def,
+                               int spAtk, int spDef, int spd) {
+        validateEv(hp, "HP");
+        validateEv(atk, "Attack");
+        validateEv(def, "Defense");
+        validateEv(spAtk, "Special Attack");
+        validateEv(spDef, "Special Defense");
+        validateEv(spd, "Speed");
+
+        int total = hp + atk + def + spAtk + spDef + spd;
+        if (total > EV_TOTAL_MAX) {
+            throw new IllegalArgumentException(
+                    "Total EVs cannot exceed %d, but was: %d"
+                            .formatted(EV_TOTAL_MAX, total));
+        }
+
+        return new Stats(Math.max(1, hp), atk, def, spAtk, spDef, spd);
+    }
+
+    private static void validateEv(int value, String name) {
+        if (value < 0 || value > EV_STAT_MAX) {
+            throw new IllegalArgumentException(
+                    "%s EV must be between 0 and %d, but was: %d"
+                            .formatted(name, EV_STAT_MAX, value));
+        }
+    }
+
     // ── Domain operations ────────────────────────────────────
 
     /**

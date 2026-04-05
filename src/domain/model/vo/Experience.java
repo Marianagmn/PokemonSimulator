@@ -17,7 +17,7 @@ import java.util.Objects;
 public record Experience(int value) implements Comparable<Experience> {
 
     public static final int MIN = 0;
-    public static final int MAX = 999_999;
+    public static final int MAX = 1_000_000;
 
     public Experience {
         if (value < MIN || value > MAX) {
@@ -128,13 +128,6 @@ public record Experience(int value) implements Comparable<Experience> {
         return Integer.compare(this.value, other.value);
     }
 
-    public boolean isGreaterThan(Experience other) {
-        return this.compareTo(other) > 0;
-    }
-
-    public boolean isLessThan(Experience other) {
-        return this.compareTo(other) < 0;
-    }
 
     public boolean isGreaterOrEqual(Experience other) {
         return this.compareTo(other) >= 0;

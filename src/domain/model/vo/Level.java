@@ -110,14 +110,6 @@ public record Level(int value) implements Comparable<Level> {
         return Integer.compare(this.value, other.value);
     }
 
-    public boolean isGreaterThan(Level other) {
-        return this.compareTo(other) > 0;
-    }
-
-    public boolean isLessThan(Level other) {
-        return this.compareTo(other) < 0;
-    }
-
     public boolean isGreaterOrEqual(Level other) {
         return this.compareTo(other) >= 0;
     }
